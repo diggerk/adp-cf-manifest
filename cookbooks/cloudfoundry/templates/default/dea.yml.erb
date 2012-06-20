@@ -1,0 +1,13 @@
+---
+deployment:
+  name: "adp"
+  domain: "<%= node[:cloudfoundry][:domain] %>"
+jobs:
+  install:
+    - dea
+  installed:
+    - nats_server:
+      host: "<%= node[:cloudfoundry][:nats_ip] %>"
+      port: "4222"
+      user: "nats"
+      password: "nats"

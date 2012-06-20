@@ -1,0 +1,15 @@
+#!/bin/sh
+case "$1" in
+start)
+sudo -u ubuntu /home/ubuntu/cloudfoundry/vcap/dev_setup/bin/vcap_dev -n adp $1
+;;
+stop)
+sudo -u ubuntu /home/ubuntu/cloudfoundry/vcap/dev_setup/bin/vcap_dev -n adp $1
+;;
+status)
+if ! (sudo -u ubuntu /home/ubuntu/cloudfoundry/vcap/dev_setup/bin/vcap_dev -n adp $1 | grep RUNNING); then
+  echo "All components are stopped"
+  exit 1
+fi
+;;
+esac

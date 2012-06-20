@@ -1,0 +1,43 @@
+launch:
+    parameters: 
+         hardwareId:
+             description: VM flavor/size ID
+             default: m1.small
+         imageId:
+             description: VM Image ID
+             default: us-east-1/ami-7ed27017
+
+    steps:
+        - provision:
+            action: provisionAmazonVm
+            parameters:
+                phase: provision
+                roleName: singlenode_cloudfoundry
+                jcloudsIdentity: .
+                jcloudsCredential: .
+                imageId: $imageId
+                hardwareId: $hardwareId
+                vmIdentity: ubuntu
+            output:
+                publicIp: ips
+        - install:
+            action: chefrun
+            parameters:
+                phase: install
+                precedingPhases: [ provision ]
+                roles: [ singlenode_cloudfoundry ]
+                runList: [ "recipe[cloudfoundry]" ]
+                isSolo: true
+                recipeUrl: "https://s3.amazonaws.com/chefsolo/singlenode_cloudfoundry.tar.gz"
+
+    return:
+        - publicIp:
+            description: IP addresses of provisioned VM
+            value: ${publicIp}
+
+destroy:
+    steps:
+        - undeployEnv:
+            action: undeployEnv
+            parameters:
+                phase: destroy

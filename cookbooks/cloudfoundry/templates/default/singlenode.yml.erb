@@ -1,0 +1,7 @@
+---
+deployment:
+  name: "adp"
+  domain: "<%= node[:cloudfoundry][:domain] %>"
+jobs:
+  install:
+    - all

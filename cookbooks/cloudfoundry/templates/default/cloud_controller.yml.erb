@@ -1,0 +1,31 @@
+---
+deployment:
+  name: "adp"
+  domain: "<%= node[:cloudfoundry][:domain] %>"
+jobs:
+  install:
+    #- router
+    - nats_server
+    - cloud_controller:
+        builtin_services:
+          - redis
+          - mongodb
+          - mysql
+    - health_manager
+    - redis_node:
+        index: "0"
+    - redis_gateway
+    - ccdb
+    #- dea
+    - mysql_node:
+        index: "0"
+    - mysql_gateway
+    - mongodb_gateway
+    - mongodb_node:
+        index: "0"
+  #installed:
+    #- nats_server:
+      #host: "172.31.4.13"
+      #port: "4222"
+      #user: "nats"
+      #password: "nats"
