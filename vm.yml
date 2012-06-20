@@ -1,0 +1,37 @@
+launch:
+    parameters: 
+         hardwareId:
+             description: VM flavor/size ID
+             default: m1.small
+         imageId:
+             description: VM Image ID
+             default: us-east-1/ami-c015c9a9
+         quantity: 
+             type: int
+             description: Quantity of VMs to provision
+             default: 1
+
+    steps:
+        - provision:
+            action: provisionAmazonVm
+            parameters:
+                 jcloudsIdentity: .
+                 jcloudsCredential: .
+                 quantity: $quantity
+                 imageId: $imageId
+                 hardwareId: $hardwareId
+                 vmIdentity: ubuntu
+            output:
+                 publicIp: ips
+
+    return:
+        - publicIp:
+            description: IP addresses of provisioned VMs
+            value: ${publicIp}
+
+destroy:
+    steps:
+        - undeployEnv:
+            action: undeployEnv
+            parameters:
+                phase: destroy
