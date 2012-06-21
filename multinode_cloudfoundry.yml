@@ -1,0 +1,122 @@
+launch:
+    parameters: 
+         hardwareId:
+             description: VM flavor/size ID
+             default: m1.small
+         imageId:
+             description: VM Image ID
+             default: us-east-1/ami-7ed27017
+         deaAmount:
+             description: number of DEA nodes to provision
+             type: int
+             default: 2
+         routerAmount:
+             description: number of Router nodes to provision
+             type: int
+             default: 1
+         cfVersion:
+             description: vcap repository branch/tag/SHA
+             default: 288382ee7f5c4ba2d9a46cb20d2e66317ca1256c
+
+    steps:
+        - provision_cc:
+            action: provisionAmazonVm
+            parameters:
+                phase: provision_cc
+                roleName: cloud_controller
+                jcloudsIdentity: .
+                jcloudsCredential: .
+                ec2SecurityGroup: cloudfoundry
+                imageId: $imageId
+                hardwareId: $hardwareId
+                vmIdentity: ubuntu
+            output:
+                cloudControllerIp: ips
+        - provision_dea:
+            action: provisionAmazonVm
+            parameters:
+                phase: provision_dea
+                quantity: $deaAmount
+                roleName: dea
+                jcloudsIdentity: .
+                jcloudsCredential: .
+                ec2SecurityGroup: cloudfoundry
+                imageId: $imageId
+                hardwareId: $hardwareId
+                vmIdentity: ubuntu
+            output:
+                deaIp: ips
+        - provision_router:
+            action: provisionAmazonVm
+            parameters:
+                phase: provision_router
+                quantity: $routerAmount
+                roleName: router
+                jcloudsIdentity: .
+                jcloudsCredential: .
+                ec2SecurityGroup: cloudfoundry
+                imageId: $imageId
+                hardwareId: $hardwareId
+                vmIdentity: ubuntu
+            output:
+                routerIp: ips
+        - install_cc:
+            action: chefrun
+            parameters:
+                phase: install_cc
+                precedingPhases: [ provision_cc ]
+                roles: [ cloud_controller ]
+                runList: [ "recipe[cloudfoundry]" ]
+                jattrs:
+                    cloudfoundry:
+                        version: $cfVersion
+                        role: cloud_controller
+                        nats_ip: 0.0.0.0
+                isSolo: true
+                recipeUrl: "https://s3.amazonaws.com/chefsolo/cloudfoundry.tar.gz"
+        - install_dea:
+            action: chefrun
+            parameters:
+                phase: install_dea
+                precedingPhases: [ provision_dea, install_cc ]
+                roles: [ dea ]
+                runList: [ "recipe[cloudfoundry]" ]
+                jattrs:
+                    cloudfoundry:
+                        version: $cfVersion
+                        role: dea
+                        nats_ip: $cloudControllerIp
+                isSolo: true
+                recipeUrl: "https://s3.amazonaws.com/chefsolo/cloudfoundry.tar.gz"
+        - install_router:
+            action: chefrun
+            parameters:
+                phase: install_router
+                precedingPhases: [ provision_router, install_cc ]
+                roles: [ router ]
+                runList: [ "recipe[cloudfoundry]" ]
+                jattrs:
+                    cloudfoundry:
+                        version: $cfVersion
+                        role: router
+                        nats_ip: $cloudControllerIp
+                isSolo: true
+                recipeUrl: "https://s3.amazonaws.com/chefsolo/cloudfoundry.tar.gz"
+
+    return:
+        - cloudControllerIp:
+            description: IP address of Cloud Controller node
+            value: $cloudControllerIp
+        - deaIp:
+            description: IP addresses of DEA nodes
+            value: $deaIp
+        - routerIp:
+            description: IP addresses of Router nodes
+            value: $routerIp
+
+destroy:
+    steps:
+        - undeployEnv:
+            action: undeployEnv
+            parameters:
+                phase: destroy

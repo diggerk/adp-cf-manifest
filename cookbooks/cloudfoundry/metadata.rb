@@ -6,8 +6,14 @@ recipe            "cloudfoundry", "Deploy CF"
   supports os
 end
 
+attribute "cloudfoundry/version",
+  :default => "master"
+
 attribute "cloudfoundry/role",
   :default => "singlenode"
+
+attribute "cloudfoundry/nats_ip",
+  :default => "127.0.0.1"
 
 attribute "cloudfoundry/domain",
   :default => "vcap.me"

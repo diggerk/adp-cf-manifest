@@ -29,7 +29,7 @@ bash "Install Cloud Foundry" do
 curl -s -k -B https://raw.github.com/cloudfoundry/vcap/master/dev_setup/bin/vcap_dev_setup -o /tmp/vcap_dev_setup
 chmod +x /tmp/vcap_dev_setup
 cd #{home_dir}
-/tmp/vcap_dev_setup -D #{node[:cloudfoundry][:domain]} -c #{home_dir}/cloudfoundry.yml -a 2>&1 | tee /tmp/vcap_dev_setup.log
+/tmp/vcap_dev_setup -D #{node[:cloudfoundry][:domain]} -c #{home_dir}/cloudfoundry.yml -a -b #{node[:cloudfoundry][:version]} 2>&1 | tee /tmp/vcap_dev_setup.log
 rm /tmp/vcap_dev_setup
 SETUP
   
@@ -37,7 +37,7 @@ SETUP
    su - #{user} -c /tmp/vcap_run_setup.sh
 
    EOF
-   not_if "test -d #{home_dir}/cloudfoundry"
+   not_if "test -f #{home_dir}/cloudfoundry/.deployments/adp/config/vcap_components.json"
 end
 
 

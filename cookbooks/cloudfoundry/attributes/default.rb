@@ -1,4 +1,6 @@
+default[:cloudfoundry][:version] = "master" 
 default[:cloudfoundry][:role] = "singlenode" 
 default[:cloudfoundry][:domain] = "vcap.me" 
 default[:cloudfoundry][:user] = "ubuntu" 
 default[:cloudfoundry][:group] = "ubuntu" 
+default[:cloudfoundry][:nats_ip] = "127.0.0.1" 
