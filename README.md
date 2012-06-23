@@ -84,14 +84,7 @@ Verifying installation
     Successfully logged into [http://api.vcap.me]
     </pre>
 
-3. Download [Cloud Foundry samples](https://github.com/cloudfoundry/cloudfoundry-samples)
-4. Build "hello-java" app
-
-    <pre>
-    $ mvn package
-    ...
-    </pre>
-
+3. Download [Cloud Foundry samples](https://github.com/cloudfoundry/cloudfoundry-samples) and build "hello-java" app
 4. Upload application
 
     <pre>
