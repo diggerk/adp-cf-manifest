@@ -89,17 +89,37 @@ Verifying installation
 
     <pre>
     $ mvn package
+    ...
     </pre>
 
 4. Upload application
 
     <pre>
-    vmc push hello --mem 64M
+    $ vmc push hello --mem 64M
+    Would you like to deploy from the current directory? [Yn]: 
+    Application Deployed URL [hello.vcap.me]: 
+    Detected a Java Web Application, is this correct? [Yn]: 
+    Creating Application: OK
+    Uploading Application:
+      Checking for available resources: OK
+      Packing application: OK
+      Uploading (4K): OK   
+    Push Status: OK
+    Staging Application: OK                                                         
+    Starting Application: OK 
     </pre>
 
 5. Test that app is running
 
     <pre>
-    vmc apps
-    curl http://hello.vcap.me
+    $ vmc apps
+
+    +-------------+----+---------+-----------------+----------+
+    | Application | #  | Health  | URLS            | Services |
+    +-------------+----+---------+-----------------+----------+
+    | hello       | 1  | RUNNING | hello.vcap.me   |          |
+    +-------------+----+---------+-----------------+----------+
+
+    $ curl http://hello.vcap.me
+    Hello from 10.245.21.39:33533
     </pre>
