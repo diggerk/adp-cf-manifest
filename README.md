@@ -8,6 +8,7 @@ There are two manifests here: singlenode_cloudfoundry.yml is for a single node C
 and multinode_cloudfoundry.yml is for multi node.
 
 The multi node manifest provisions:
+
 1. 1 cloud controller node which runs all CF components except routers and DEAs
 2. specified number of router nodes
 3. specified number of DEA nodes
@@ -38,24 +39,24 @@ On a macbook it can be implemented this way:
 
 1. Create SSH tunnel to the router:
     
-    <code>
+    <pre>
     $ sudo ssh -i <path to pem file> -L 80:<CF router IP>:80 ubuntu@<CF router IP> -N
-    </code>
+    </pre>
 
 2. Download and Run DNS proxy 
 
-    <code>
-    $ wget http://marlon-tools.googlecode.com/hg/tools/dnsproxy/dnsproxy.py
+    <pre>
+    $ wget http://marlon-tools.googlepre.com/hg/tools/dnsproxy/dnsproxy.py
     ...
     $ sudo python dnsproxy.py -s 8.8.8.8
-    </code>
+    </pre>
 
 Verifying installation
 ----------------------
 
 1. Install [VMC](https://github.com/cloudfoundry/vmc), Cloud Foundry CLI
 
-    <code>
+    <pre>
     $ curl -L https://nodeload.github.com/cloudfoundry/vmc/tarball/master | tar xz
     ...
     $ cd cloudfoundry-vmc*
@@ -66,12 +67,12 @@ Verifying installation
       Version: 0.3.18
       File: vmc-0.3.18.gem
     $ sudo gem install *gem
-    </code>
+    </pre>
 
 
 2. Connect to Cloud Foundry
 
-    <code>
+    <pre>
     $ vmc target http://api.vcap.me
     Successfully targeted to [http://api.vcap.me]
 
@@ -81,24 +82,24 @@ Verifying installation
     $ vmc login --email user@fake.com --passwd fakepwd
     Attempting login to [http://api.vcap.me]
     Successfully logged into [http://api.vcap.me]
-    </code>
+    </pre>
 
 3. Download [Cloud Foundry samples](https://github.com/cloudfoundry/cloudfoundry-samples)
 4. Build "hello-java" app
 
-    <code>
+    <pre>
     $ mvn package
-    </code>
+    </pre>
 
 4. Upload application
 
-    <code>
+    <pre>
     vmc push hello --mem 64M
-    </code>
+    </pre>
 
 5. Test that app is running
 
-    <code>
+    <pre>
     vmc apps
     curl http://hello.vcap.me
-    </code>
+    </pre>
